@@ -1,5 +1,5 @@
 <template>
-  <section class="h-full overflow-y-auto rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-950 print:border-0 print:shadow-none">
+  <section class="print-resume h-full overflow-y-auto rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-950 print:h-auto print:overflow-visible print:rounded-none print:border-0 print:bg-white print:p-0 print:shadow-none">
     <component
       :is="templateComponent"
       :personal="form.personal"

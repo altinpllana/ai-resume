@@ -1,63 +1,14 @@
 <template>
   <div class="flex min-h-screen flex-col bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
     <TopBar />
-    <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-6 lg:flex-row">
-      <section class="lg:w-2/5">
+    <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 pb-32 pt-6 lg:flex-row print:mx-0 print:w-full print:max-w-none print:flex-col print:gap-0 print:p-0">
+      <section class="lg:w-2/5 print:hidden screen-only">
         <div class="sticky top-6 flex flex-col gap-4 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
-          <div class="space-y-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-950">
-            <div class="flex flex-wrap gap-2">
-              <button
-                type="button"
-                class="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
-                @click="handleImprove"
-                :disabled="aiLoading"
-              >
-                <span v-if="aiLoading" class="flex items-center gap-2">
-                  <span class="h-2 w-2 animate-ping rounded-full bg-white"></span>
-                  Thinking...
-                </span>
-                <span v-else>Improve With AI</span>
-              </button>
-              <button
-                type="button"
-                class="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
-                @click="handlePrint"
-              >
-                Print / Export PDF
-              </button>
-              <button
-                type="button"
-                class="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
-                @click="handleSave"
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                class="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
-                @click="handleLoad"
-              >
-                Load
-              </button>
-              <button
-                type="button"
-                class="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
-                @click="handleDownload"
-              >
-                Download JSON
-              </button>
-              <button
-                type="button"
-                class="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
-                @click="triggerUpload"
-              >
-                Upload JSON
-              </button>
-              <input ref="uploadInput" type="file" accept="application/json" class="hidden" @change="onUpload" />
-            </div>
-            <p v-if="aiError" class="text-sm text-red-600">{{ aiError }}</p>
-            <p v-if="statusMessage" class="text-sm text-emerald-600">{{ statusMessage }}</p>
-            <p class="text-xs text-gray-500">Data is stored locally in your browser when you save.</p>
+          <div v-if="aiError" class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-700 dark:bg-red-900/40 dark:text-red-200">
+            {{ aiError }}
+          </div>
+          <div v-else-if="statusMessage" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200">
+            {{ statusMessage }}
           </div>
           <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-950">
             <FormPanel
@@ -72,9 +23,9 @@
           </div>
         </div>
       </section>
-      <section class="flex-1 lg:w-3/5">
-        <div class="flex flex-col gap-4">
-          <div class="flex items-center justify-between">
+      <section class="flex-1 lg:w-3/5 print:w-full print:px-0">
+        <div class="flex flex-col gap-4 print:gap-0">
+          <div class="flex items-center justify-between screen-only">
             <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">Preview</h2>
             <div class="flex gap-2 text-sm">
               <button
@@ -97,6 +48,61 @@
         </div>
       </section>
     </main>
+    <footer class="screen-only fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90">
+      <div class="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
+            @click="handleImprove"
+            :disabled="aiLoading"
+          >
+            <span v-if="aiLoading" class="flex items-center gap-2">
+              <span class="h-2 w-2 animate-ping rounded-full bg-white"></span>
+              Thinking...
+            </span>
+            <span v-else>Improve With AI</span>
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
+            @click="handlePrint"
+          >
+            Print / Export PDF
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
+            @click="handleSave"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
+            @click="handleLoad"
+          >
+            Load
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
+            @click="handleDownload"
+          >
+            Download JSON
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-400"
+            @click="triggerUpload"
+          >
+            Upload JSON
+          </button>
+          <input ref="uploadInput" type="file" accept="application/json" class="hidden" @change="onUpload" />
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Data is stored locally in your browser when you save.</p>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -207,11 +213,13 @@ function handlePrint() {
 }
 
 function handleSave() {
+  aiError.value = '';
   saveResume(plainForm());
   statusMessage.value = 'Resume saved to this browser.';
 }
 
 function handleLoad() {
+  aiError.value = '';
   const stored = loadResume();
   if (!stored) {
     statusMessage.value = 'No saved resume found.';
@@ -222,7 +230,9 @@ function handleLoad() {
 }
 
 function handleDownload() {
+  aiError.value = '';
   downloadResume(plainForm());
+  statusMessage.value = 'Resume JSON downloaded.';
 }
 
 function triggerUpload() {
@@ -234,11 +244,13 @@ async function onUpload(event: Event) {
   const file = target.files?.[0];
   if (!file) return;
   try {
+    aiError.value = '';
     const data = await readResumeFile(file);
     applyForm(data);
     statusMessage.value = 'Resume uploaded.';
   } catch (error) {
     aiError.value = error instanceof Error ? error.message : 'Failed to read resume file.';
+    statusMessage.value = '';
   } finally {
     target.value = '';
   }
