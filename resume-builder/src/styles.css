@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-sans text-base leading-relaxed;
+}
+
+a {
+  @apply text-blue-600 dark:text-blue-400 underline-offset-4 hover:underline;
+}
+
+input,
+textarea,
+select,
+button {
+  @apply font-sans;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  body {
+    background: white !important;
+  }
+
+  .screen-only {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-page {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+}
