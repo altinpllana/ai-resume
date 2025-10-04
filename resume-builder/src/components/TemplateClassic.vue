@@ -1,6 +1,6 @@
 <template>
   <article class="print-page space-y-8" :style="styleVars">
-    <header class="space-y-2 text-center">
+    <header class="space-y-2 text-center print-keep-together">
       <h1 class="text-3xl font-semibold heading">{{ personal.fullName || 'Your Name' }}</h1>
       <p class="text-base font-medium subheading">{{ personal.title || 'Professional Title' }}</p>
       <p class="text-sm muted flex flex-wrap justify-center gap-2">
@@ -20,7 +20,12 @@
 
     <section v-if="experience.length" class="space-y-4">
       <h2 class="section-heading">Experience</h2>
-      <div v-for="item in experience" :key="item.id" class="space-y-1 border-l pl-4" :style="{ borderColor: colors.divider }">
+      <div
+        v-for="item in experience"
+        :key="item.id"
+        class="space-y-1 border-l pl-4 print-keep-together"
+        :style="{ borderColor: colors.divider }"
+      >
         <div class="flex flex-wrap items-baseline justify-between gap-2">
           <div>
             <p class="text-sm font-semibold heading">{{ item.role || 'Role' }}</p>
@@ -36,7 +41,11 @@
 
     <section v-if="education.length" class="space-y-3">
       <h2 class="section-heading">Education</h2>
-      <div v-for="item in education" :key="item.id" class="flex flex-wrap items-baseline justify-between gap-2">
+      <div
+        v-for="item in education"
+        :key="item.id"
+        class="flex flex-wrap items-baseline justify-between gap-2 print-keep-together"
+      >
         <div>
           <p class="text-sm font-semibold heading">{{ item.school }}</p>
           <p class="text-sm muted">{{ item.degree }}</p>

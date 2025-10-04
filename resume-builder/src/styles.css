@@ -45,6 +45,11 @@ button {
     background: white !important;
   }
 
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   .screen-only {
     display: none !important;
   }
@@ -54,14 +59,31 @@ button {
     display: block !important;
   }
 
+  .print-resume {
+    box-shadow: none !important;
+  }
+
   .print-page {
+    box-sizing: border-box;
     width: 100%;
-    padding: 18mm;
-    margin: 0;
-    page-break-inside: avoid;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 18mm 20mm;
   }
 
   .print-page section {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  .print-keep-together {
+    break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  .print-page ul,
+  .print-page ol,
+  .print-page li {
+    break-inside: avoid;
   }
 }

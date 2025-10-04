@@ -1,6 +1,6 @@
 <template>
   <article class="print-page space-y-5" :style="styleVars">
-    <header class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <header class="flex flex-col gap-2 print-keep-together sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-semibold heading">{{ personal.fullName || 'Your Name' }}</h1>
         <p class="text-sm font-medium subheading">{{ personal.title || 'Professional Title' }}</p>
@@ -21,7 +21,7 @@
     <section v-if="experience.length" class="grid gap-3">
       <h2 class="section-heading">Experience</h2>
       <div class="grid gap-3">
-        <div v-for="item in experience" :key="item.id" class="grid gap-1">
+        <div v-for="item in experience" :key="item.id" class="grid gap-1 print-keep-together">
           <div class="flex flex-wrap items-baseline justify-between gap-2">
             <div>
               <p class="text-sm font-semibold heading">{{ item.role || 'Role' }}</p>
@@ -39,7 +39,12 @@
     <section v-if="education.length" class="grid gap-2">
       <h2 class="section-heading">Education</h2>
       <div class="grid gap-2 sm:grid-cols-2">
-        <div v-for="item in education" :key="item.id" class="rounded border px-3 py-2" :style="{ borderColor: colors.divider }">
+        <div
+          v-for="item in education"
+          :key="item.id"
+          class="rounded border px-3 py-2 print-keep-together"
+          :style="{ borderColor: colors.divider }"
+        >
           <p class="text-sm font-semibold heading">{{ item.school }}</p>
           <p class="text-xs muted">{{ item.degree }}</p>
           <p class="text-xs uppercase tracking-wide muted">{{ item.years }}</p>

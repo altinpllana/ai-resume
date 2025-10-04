@@ -1,6 +1,6 @@
 <template>
   <article class="print-page space-y-6" :style="styleVars">
-    <header class="grid gap-3">
+    <header class="grid gap-3 print-keep-together">
       <div>
         <h1 class="text-3xl font-semibold heading">{{ personal.fullName || 'Your Name' }}</h1>
         <p class="text-base font-medium subheading">{{ personal.title || 'Professional Title' }}</p>
@@ -24,7 +24,7 @@
         <div
           v-for="item in experience"
           :key="item.id"
-          class="grid gap-2 rounded-lg border p-4 shadow-sm"
+          class="grid gap-2 rounded-lg border p-4 shadow-sm print-keep-together"
           :style="{ borderColor: colors.divider, boxShadow: `0 2px 4px ${shadowColor}` }"
         >
           <div class="flex flex-wrap items-baseline justify-between gap-2">
@@ -44,7 +44,12 @@
     <section v-if="education.length" class="grid gap-3">
       <h2 class="section-heading">Education</h2>
       <div class="grid gap-3 sm:grid-cols-2">
-        <div v-for="item in education" :key="item.id" class="rounded-lg border p-3" :style="{ borderColor: colors.divider }">
+        <div
+          v-for="item in education"
+          :key="item.id"
+          class="rounded-lg border p-3 print-keep-together"
+          :style="{ borderColor: colors.divider }"
+        >
           <p class="text-sm font-semibold heading">{{ item.school }}</p>
           <p class="text-sm muted">{{ item.degree }}</p>
           <p class="text-xs uppercase tracking-wide muted">{{ item.years }}</p>

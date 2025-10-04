@@ -1,6 +1,9 @@
 <template>
   <article class="print-page grid gap-6 lg:grid-cols-[220px_1fr]" :style="styleVars">
-    <aside class="rounded-xl border p-4" :style="{ borderColor: colors.divider, backgroundColor: sidebarBg }">
+    <aside
+      class="rounded-xl border p-4 print-keep-together"
+      :style="{ borderColor: colors.divider, backgroundColor: sidebarBg }"
+    >
       <div class="space-y-4">
         <div>
           <h1 class="text-2xl font-semibold heading">{{ personal.fullName || 'Your Name' }}</h1>
@@ -30,7 +33,7 @@
       <section v-if="experience.length" class="grid gap-4">
         <h2 class="section-heading">Experience</h2>
         <div class="grid gap-4">
-          <div v-for="item in experience" :key="item.id" class="grid gap-2">
+          <div v-for="item in experience" :key="item.id" class="grid gap-2 print-keep-together">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
               <div>
                 <p class="text-sm font-semibold heading">{{ item.role || 'Role' }}</p>
@@ -48,7 +51,12 @@
       <section v-if="education.length" class="grid gap-3">
         <h2 class="section-heading">Education</h2>
         <div class="grid gap-3">
-          <div v-for="item in education" :key="item.id" class="flex flex-wrap items-baseline justify-between gap-2 border-b pb-2" :style="{ borderColor: colors.divider }">
+          <div
+            v-for="item in education"
+            :key="item.id"
+            class="flex flex-wrap items-baseline justify-between gap-2 border-b pb-2 print-keep-together"
+            :style="{ borderColor: colors.divider }"
+          >
             <div>
               <p class="text-sm font-semibold heading">{{ item.school }}</p>
               <p class="text-sm muted">{{ item.degree }}</p>
