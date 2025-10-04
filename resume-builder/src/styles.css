@@ -48,6 +48,7 @@ button {
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    margin: 0;
   }
 
   .screen-only {
@@ -59,21 +60,25 @@ button {
     display: block !important;
   }
 
-  .print-resume {
-    box-shadow: none !important;
-  }
-
   .print-page {
     box-sizing: border-box;
     width: 100%;
     max-width: 210mm;
     margin: 0 auto;
-    padding: 18mm 20mm;
+    padding: 2rem;
   }
 
-  .print-page section {
-    break-inside: auto !important;
-    page-break-inside: auto !important;
+  .print-page > * {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-page > *:first-child {
+    margin-top: 0 !important;
+  }
+
+  .print-page > *:last-child {
+    margin-bottom: 0 !important;
   }
 
   .print-keep-together {
@@ -85,5 +90,6 @@ button {
   .print-page ol,
   .print-page li {
     break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

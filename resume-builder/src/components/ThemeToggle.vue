@@ -33,10 +33,11 @@ function toggle() {
 
 onMounted(() => {
   const stored = localStorage.getItem('theme');
-  if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  if (stored === 'dark') {
     applyTheme(true);
-  } else {
-    applyTheme(false);
+    return;
   }
+
+  applyTheme(false);
 });
 </script>
