@@ -27,9 +27,14 @@
           </div>
           <button
             type="submit"
-            class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700"
+            class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
+            :disabled="marketingEmailSubmitting"
           >
-            Continue
+            <span v-if="marketingEmailSubmitting" class="flex items-center justify-center gap-2">
+              <span class="h-2 w-2 animate-ping rounded-full bg-white"></span>
+              Saving...
+            </span>
+            <span v-else>Continue</span>
           </button>
         </form>
       </div>
@@ -165,6 +170,7 @@ import {
 } from './lib/schema';
 import { downloadResume, loadResume, readResumeFile, saveResume } from './lib/storage';
 import { improveResume } from './lib/ai';
+import { storeMarketingEmail } from './lib/marketing';
 
 const form = reactive<ResumeForm>(createResumeForm());
 const aiLoading = ref(false);
@@ -174,6 +180,7 @@ const uploadInput = ref<HTMLInputElement | null>(null);
 const marketingEmail = ref('');
 const marketingEmailError = ref('');
 const marketingEmailInput = ref<HTMLInputElement | null>(null);
+const marketingEmailSubmitting = ref(false);
 const emailModalOpen = ref(true);
 
 const EMAIL_STORAGE_KEY = 'resume-builder-marketing-email';
@@ -228,7 +235,7 @@ function ensureMarketingEmail(): boolean {
   return false;
 }
 
-function submitMarketingEmail() {
+async function submitMarketingEmail() {
   const value = marketingEmail.value.trim();
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!value) {
@@ -241,9 +248,18 @@ function submitMarketingEmail() {
   }
   marketingEmail.value = value;
   marketingEmailError.value = '';
-  localStorage.setItem(EMAIL_STORAGE_KEY, value);
-  emailModalOpen.value = false;
-  statusMessage.value = 'Thanks! You can now continue building your resume.';
+  marketingEmailSubmitting.value = true;
+  try {
+    await storeMarketingEmail(value);
+    localStorage.setItem(EMAIL_STORAGE_KEY, value);
+    emailModalOpen.value = false;
+    statusMessage.value = 'Thanks! You can now continue building your resume.';
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unable to save email. Please try again.';
+    marketingEmailError.value = message;
+  } finally {
+    marketingEmailSubmitting.value = false;
+  }
 }
 
 function updatePersonal({ field, value }: { field: keyof PersonalInfo; value: string }) {

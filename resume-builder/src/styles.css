@@ -64,7 +64,7 @@ button {
     border: none !important;
     box-shadow: none !important;
     background: transparent !important;
-    padding: 0 !important;
+    padding: 2rem !important;
     margin: 0 auto !important;
     max-width: 210mm;
     width: 100%;

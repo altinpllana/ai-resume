@@ -8,6 +8,7 @@ A minimalist resume builder with a Vue 3 + Vite frontend and a lightweight Expre
 - AI-assisted improvements for summary, experience bullet points, and skill suggestions.
 - Local JSON save/load plus download/upload support.
 - Light/Dark theme toggle with persistence and print-friendly layout for PDF export.
+- Mandatory marketing opt-in modal that stores the provided email in `marketing-emails.json` (no database required).
 
 ## Setup
 
@@ -47,6 +48,10 @@ Within `server/`:
 
 ## Printing to PDF
 Use the **Print / Export PDF** button to open the browser print dialog. Choose “Save as PDF” for an A4-friendly export. Controls are hidden and layout is optimized during printing.
+
+## Marketing Email Capture
+- Emails collected via the opt-in modal are appended to `marketing-emails.json` at the project root.
+- The file is plain JSON (an array of strings) so it can be reviewed, backed up, or imported elsewhere without any database setup.
 
 ## Rate Limiting
 The `/api/generate` endpoint uses a simple in-memory limiter allowing up to 30 requests per hour per IP.

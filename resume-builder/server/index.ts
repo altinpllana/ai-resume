@@ -1,12 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { requestImprovements, ResumePayload } from './openai.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const EMAIL_STORE_PATH = path.resolve(__dirname, '..', 'marketing-emails.json');
 
 app.use(
   cors({
@@ -16,6 +23,39 @@ app.use(
   })
 );
 app.use(express.json({ limit: '1mb' }));
+
+async function ensureEmailStore(): Promise<void> {
+  try {
+    await fs.access(EMAIL_STORE_PATH);
+  } catch (error: unknown) {
+    const err = error as NodeJS.ErrnoException;
+    if (err?.code === 'ENOENT') {
+      await fs.writeFile(EMAIL_STORE_PATH, '[]\n', 'utf8');
+    } else {
+      throw error;
+    }
+  }
+}
+
+async function readEmailStore(): Promise<string[]> {
+  await ensureEmailStore();
+  try {
+    const raw = await fs.readFile(EMAIL_STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error('Failed to read marketing email store', error);
+    return [];
+  }
+}
+
+async function appendMarketingEmail(email: string): Promise<void> {
+  const emails = await readEmailStore();
+  if (!emails.includes(email)) {
+    emails.push(email);
+    await fs.writeFile(EMAIL_STORE_PATH, `${JSON.stringify(emails, null, 2)}\n`, 'utf8');
+  }
+}
 
 type RateBucket = { count: number; reset: number };
 const RATE_LIMIT = 30;
@@ -78,6 +118,23 @@ app.post('/api/generate', async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Failed to improve resume. Please try again.' });
+  }
+});
+
+app.post('/api/marketing-email', async (req, res) => {
+  const { email } = req.body as { email?: string };
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!email || typeof email !== 'string' || !emailPattern.test(email)) {
+    return res.status(400).json({ error: 'Valid email is required.' });
+  }
+
+  try {
+    await appendMarketingEmail(email.trim());
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Failed to store marketing email', error);
+    return res.status(500).json({ error: 'Unable to save email. Please try again.' });
   }
 });
 
