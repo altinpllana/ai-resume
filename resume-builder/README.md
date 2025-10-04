@@ -3,7 +3,7 @@
 A minimalist resume builder with a Vue 3 + Vite frontend and a lightweight Express API that leverages OpenAI for content improvements.
 
 ## Features
-- Real-time two-column resume preview with Simple and Modern templates.
+- Real-time two-column resume preview with six minimalist templates plus custom text, heading, and divider colors.
 - Repeatable experience and education entries, skill tag rendering, and optional target job description.
 - AI-assisted improvements for summary, experience bullet points, and skill suggestions.
 - Local JSON save/load plus download/upload support.

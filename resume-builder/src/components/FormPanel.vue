@@ -110,6 +110,42 @@
         @input="emit('update-job-description', ($event.target as HTMLTextAreaElement).value)"
       ></textarea>
     </section>
+
+    <section class="space-y-3">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">Appearance</h2>
+      <div class="grid gap-4 md:grid-cols-3">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="textColor">Text Color</label>
+          <input
+            id="textColor"
+            type="color"
+            class="h-10 w-full cursor-pointer rounded border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-gray-800"
+            :value="form.colors.text"
+            @input="onColorChange('text', ($event.target as HTMLInputElement).value)"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="headingColor">Heading Color</label>
+          <input
+            id="headingColor"
+            type="color"
+            class="h-10 w-full cursor-pointer rounded border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-gray-800"
+            :value="form.colors.heading"
+            @input="onColorChange('heading', ($event.target as HTMLInputElement).value)"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="dividerColor">Divider Color</label>
+          <input
+            id="dividerColor"
+            type="color"
+            class="h-10 w-full cursor-pointer rounded border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-gray-800"
+            :value="form.colors.divider"
+            @input="onColorChange('divider', ($event.target as HTMLInputElement).value)"
+          />
+        </div>
+      </div>
+    </section>
   </form>
 </template>
 
@@ -129,9 +165,14 @@ const emit = defineEmits<{
   (e: 'update-education', value: ResumeForm['education']): void;
   (e: 'update-skills', value: string): void;
   (e: 'update-job-description', value: string): void;
+  (e: 'update-colors', value: ResumeForm['colors']): void;
 }>();
 
 function onPersonal(field: keyof PersonalInfo, value: string) {
   emit('update-personal', { field, value });
+}
+
+function onColorChange(field: keyof ResumeForm['colors'], value: string) {
+  emit('update-colors', { ...form.value.colors, [field]: value });
 }
 </script>

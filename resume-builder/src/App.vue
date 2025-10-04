@@ -19,15 +19,16 @@
               @update-education="updateEducation"
               @update-skills="(value) => (form.skills = value)"
               @update-job-description="(value) => (form.jobDescription = value)"
+              @update-colors="updateColors"
             />
           </div>
         </div>
       </section>
       <section class="flex-1 lg:w-3/5 print:w-full print:px-0">
         <div class="flex flex-col gap-4 print:gap-0">
-          <div class="flex items-center justify-between screen-only">
+          <div class="flex flex-wrap items-center justify-between gap-3 screen-only">
             <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">Preview</h2>
-            <div class="flex gap-2 text-sm">
+            <div class="flex flex-wrap gap-2 text-sm">
               <button
                 v-for="option in templateOptions"
                 :key="option.value"
@@ -44,7 +45,7 @@
               </button>
             </div>
           </div>
-          <PreviewPanel :form="form" :skills="skillsList" :template="form.template" />
+          <PreviewPanel :form="form" :skills="skillsList" :template="form.template" :colors="form.colors" />
         </div>
       </section>
     </main>
@@ -133,7 +134,11 @@ const uploadInput = ref<HTMLInputElement | null>(null);
 
 const templateOptions = [
   { value: 'simple' as const, label: 'Simple' },
-  { value: 'modern' as const, label: 'Modern' }
+  { value: 'modern' as const, label: 'Modern' },
+  { value: 'classic' as const, label: 'Classic' },
+  { value: 'elegant' as const, label: 'Elegant' },
+  { value: 'bold' as const, label: 'Bold' },
+  { value: 'compact' as const, label: 'Compact' }
 ];
 
 const skillsList = computed(() => parseSkills(form.skills));
@@ -173,6 +178,10 @@ function updateExperience(items: ExperienceItem[]) {
 
 function updateEducation(items: EducationItem[]) {
   form.education = normalizeEducation(items);
+}
+
+function updateColors(value: ResumeForm['colors']) {
+  form.colors = { ...value };
 }
 
 function plainForm(): ResumeForm {
@@ -262,6 +271,11 @@ function applyForm(data: ResumeForm) {
   form.skills = data.skills || '';
   form.jobDescription = data.jobDescription || '';
   form.template = data.template || form.template;
+  form.colors = {
+    text: data.colors?.text || form.colors.text,
+    heading: data.colors?.heading || form.colors.heading,
+    divider: data.colors?.divider || form.colors.divider
+  };
   form.experience = normalizeExperience(Array.isArray(data.experience) ? data.experience : []);
   form.education = normalizeEducation(Array.isArray(data.education) ? data.education : []);
 }

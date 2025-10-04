@@ -24,7 +24,19 @@ export interface EducationItem {
   years: string;
 }
 
-export type TemplateType = 'simple' | 'modern';
+export type TemplateType =
+  | 'simple'
+  | 'modern'
+  | 'classic'
+  | 'elegant'
+  | 'bold'
+  | 'compact';
+
+export interface ResumeColors {
+  text: string;
+  heading: string;
+  divider: string;
+}
 
 export interface ResumeForm {
   personal: PersonalInfo;
@@ -34,6 +46,7 @@ export interface ResumeForm {
   skills: string;
   jobDescription: string;
   template: TemplateType;
+  colors: ResumeColors;
 }
 
 let uid = 0;
@@ -79,7 +92,12 @@ export function createResumeForm(): ResumeForm {
     education: [createEducationItem()],
     skills: '',
     jobDescription: '',
-    template: 'simple'
+    template: 'simple',
+    colors: {
+      text: '#1f2933',
+      heading: '#111827',
+      divider: '#d1d5db'
+    }
   };
 }
 
