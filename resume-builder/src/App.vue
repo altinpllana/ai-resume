@@ -1,7 +1,44 @@
 <template>
   <div class="flex min-h-screen flex-col bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div
+      v-if="emailModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 px-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="marketing-modal-title"
+    >
+      <div class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 text-left shadow-2xl dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+        <h2 id="marketing-modal-title" class="text-lg font-semibold text-gray-900 dark:text-gray-100">Stay in the loop</h2>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+          Share your email so we can send occasional resume tips. This isn&apos;t a registration or login form—just a quick marketing opt-in.
+        </p>
+        <form class="mt-6 space-y-4" @submit.prevent="submitMarketingEmail">
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-200" for="marketingEmail">Email address</label>
+            <input
+              id="marketingEmail"
+              ref="marketingEmailInput"
+              type="email"
+              required
+              class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              v-model="marketingEmail"
+            />
+            <p v-if="marketingEmailError" class="text-sm text-red-600">{{ marketingEmailError }}</p>
+          </div>
+          <button
+            type="submit"
+            class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700"
+          >
+            Continue
+          </button>
+        </form>
+      </div>
+    </div>
     <TopBar />
-    <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 pb-32 pt-6 lg:flex-row print:mx-0 print:w-full print:max-w-none print:flex-col print:gap-0 print:p-0">
+    <main
+      class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 pb-32 pt-6 lg:flex-row print:mx-0 print:w-full print:max-w-none print:flex-col print:gap-0 print:p-0"
+      :aria-hidden="emailModalOpen"
+    >
       <section class="lg:w-2/5 print:hidden screen-only">
         <div class="sticky top-6 flex flex-col gap-4 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
           <div v-if="aiError" class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-700 dark:bg-red-900/40 dark:text-red-200">
@@ -49,7 +86,10 @@
         </div>
       </section>
     </main>
-    <footer class="screen-only fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90">
+    <footer
+      class="screen-only fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90"
+      :aria-hidden="emailModalOpen"
+    >
       <div class="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex flex-wrap items-center gap-2">
           <button
@@ -108,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import TopBar from './components/TopBar.vue';
 import FormPanel from './components/FormPanel.vue';
 import PreviewPanel from './components/PreviewPanel.vue';
@@ -131,6 +171,12 @@ const aiLoading = ref(false);
 const aiError = ref('');
 const statusMessage = ref('');
 const uploadInput = ref<HTMLInputElement | null>(null);
+const marketingEmail = ref('');
+const marketingEmailError = ref('');
+const marketingEmailInput = ref<HTMLInputElement | null>(null);
+const emailModalOpen = ref(true);
+
+const EMAIL_STORAGE_KEY = 'resume-builder-marketing-email';
 
 const templateOptions = [
   { value: 'simple' as const, label: 'Simple' },
@@ -142,6 +188,63 @@ const templateOptions = [
 ];
 
 const skillsList = computed(() => parseSkills(form.skills));
+
+function toggleScrollLock(locked: boolean) {
+  if (typeof document === 'undefined') return;
+  document.body.style.overflow = locked ? 'hidden' : '';
+  document.documentElement.style.overflow = locked ? 'hidden' : '';
+}
+
+watch(
+  emailModalOpen,
+  (open) => {
+    toggleScrollLock(open);
+    if (open) {
+      marketingEmailError.value = '';
+      nextTick(() => {
+        marketingEmailInput.value?.focus();
+      });
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  if (typeof window === 'undefined') return;
+  const stored = localStorage.getItem(EMAIL_STORAGE_KEY);
+  if (stored) {
+    marketingEmail.value = stored;
+    emailModalOpen.value = false;
+  } else {
+    emailModalOpen.value = true;
+  }
+});
+
+function ensureMarketingEmail(): boolean {
+  if (!emailModalOpen.value) {
+    return true;
+  }
+  marketingEmailError.value = 'Please enter your email before continuing.';
+  return false;
+}
+
+function submitMarketingEmail() {
+  const value = marketingEmail.value.trim();
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!value) {
+    marketingEmailError.value = 'Email is required.';
+    return;
+  }
+  if (!emailPattern.test(value)) {
+    marketingEmailError.value = 'Enter a valid email address.';
+    return;
+  }
+  marketingEmail.value = value;
+  marketingEmailError.value = '';
+  localStorage.setItem(EMAIL_STORAGE_KEY, value);
+  emailModalOpen.value = false;
+  statusMessage.value = 'Thanks! You can now continue building your resume.';
+}
 
 function updatePersonal({ field, value }: { field: keyof PersonalInfo; value: string }) {
   form.personal[field] = value;
@@ -189,6 +292,7 @@ function plainForm(): ResumeForm {
 }
 
 async function handleImprove() {
+  if (!ensureMarketingEmail()) return;
   aiError.value = '';
   statusMessage.value = '';
   aiLoading.value = true;
@@ -218,16 +322,19 @@ async function handleImprove() {
 }
 
 function handlePrint() {
+  if (!ensureMarketingEmail()) return;
   window.print();
 }
 
 function handleSave() {
+  if (!ensureMarketingEmail()) return;
   aiError.value = '';
   saveResume(plainForm());
   statusMessage.value = 'Resume saved to this browser.';
 }
 
 function handleLoad() {
+  if (!ensureMarketingEmail()) return;
   aiError.value = '';
   const stored = loadResume();
   if (!stored) {
@@ -239,12 +346,14 @@ function handleLoad() {
 }
 
 function handleDownload() {
+  if (!ensureMarketingEmail()) return;
   aiError.value = '';
   downloadResume(plainForm());
   statusMessage.value = 'Resume JSON downloaded.';
 }
 
 function triggerUpload() {
+  if (!ensureMarketingEmail()) return;
   uploadInput.value?.click();
 }
 

@@ -60,12 +60,21 @@ button {
     display: block !important;
   }
 
+  .print-resume {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    max-width: 210mm;
+    width: 100%;
+  }
+
   .print-page {
     box-sizing: border-box;
     width: 100%;
-    max-width: 210mm;
-    margin: 0 auto;
-    padding: 2rem;
+    margin: 0;
+    padding: 0;
   }
 
   .print-page > * {
